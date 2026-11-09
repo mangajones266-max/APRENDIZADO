@@ -466,6 +466,183 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
+        .chess-app-container {
+            display: flex; gap: 20px; background-color: #302e2b;
+            padding: 20px; border-radius: 12px; box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            width: 100%; height: 100%; margin: 0; overflow: hidden;
+            box-sizing: border-box; justify-content: center; align-items: center;
+        }
+        .chess-left-panel { display: flex; flex-direction: column; height: 100%; justify-content: center; align-items: center; flex: 1; }
+        #chess-container-tabuleiro {
+            display: grid;
+            grid-template-columns: 35px minmax(300px, 75vh);
+            grid-template-rows: minmax(300px, 75vh) 35px;
+        }
+        body.chess-active {
+            overflow: hidden;
+        }
+        body.chess-active .container {
+            max-width: 100vw;
+            padding: 0;
+            height: 100vh;
+            align-items: stretch;
+        }
+        body.chess-active .view.active {
+            height: 100vh;
+            justify-content: center;
+        }
+        body.chess-active .btn-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+        #chess-coords-y {
+            display: flex; flex-direction: column; justify-content: space-around;
+            align-items: center; font-weight: bold; color: #aaa; font-size: 18px;
+        }
+        #chess-coords-x {
+            grid-column: 2; display: flex; justify-content: space-around;
+            align-items: center; font-weight: bold; color: #aaa; font-size: 18px;
+        }
+        #chess-tabuleiro {
+            display: grid; grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr); border: 5px solid #1a1a1a;
+            border-radius: 6px; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            overflow: hidden; position: relative;
+        }
+        .chess-casa {
+            display: flex; justify-content: center; align-items: center;
+            user-select: none; position: relative; aspect-ratio: 1;
+        }
+        .chess-casa.branca { background-color: #ebecd0; }
+        .chess-casa.verde { background-color: #739552; }
+        .chess-peca {
+            cursor: grab; width: 100%; height: 100%; display: flex;
+            justify-content: center; align-items: center; transition: transform 0.1s;
+            background-color: transparent; padding: 4px;
+        }
+        .chess-peca img {
+            width: 100%; height: 100%; object-fit: contain;
+            filter: drop-shadow(2px 5px 5px rgba(0,0,0,0.45)); pointer-events: none;
+        }
+        .chess-peca.dragging { opacity: 0.7; transform: scale(1.1); cursor: grabbing; }
+        .chess-move-badge {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 65px; height: 65px; background-size: contain;
+            background-repeat: no-repeat; background-position: center; z-index: 20;
+            pointer-events: none; animation: chessPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes chessPopIn {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .chess-move-badge.fade-out { animation: chessFadeOut 0.4s ease-in forwards; }
+        @keyframes chessFadeOut { to { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
+        .chess-right-panel {
+            width: 380px; display: flex; flex-direction: column;
+            background-color: #21201d; border-radius: 8px; overflow: hidden;
+            border: 1px solid #403d39; min-height: 600px;
+        }
+        .chess-panel-header {
+            background-color: #302e2b; padding: 14px 16px; font-weight: bold;
+            font-size: 16px; border-bottom: 1px solid #403d39; color: #fff;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .chess-config-section {
+            padding: 12px 16px; background-color: #2b2a27;
+            border-bottom: 1px solid #403d39; display: flex; flex-direction: column; gap: 10px;
+        }
+        .chess-config-row { display: flex; gap: 8px; }
+        .chess-config-row button {
+            flex: 1; padding: 8px; border: 1px solid #555; background-color: #3a3936;
+            color: #ddd; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        .chess-config-row button:hover { background-color: #4a4946; }
+        .chess-config-row button.active { background-color: #7fa650; color: #fff; border-color: #7fa650; }
+        .chess-rating-control {
+            padding: 12px 16px; background-color: #2b2a27;
+            border-bottom: 1px solid #403d39; display: flex; flex-direction: column; gap: 8px;
+        }
+        .chess-rating-label { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; color: #bbb; }
+        .chess-rating-control input[type="range"] { width: 100%; cursor: pointer; accent-color: #7fa650; }
+        .chess-ai-chat {
+            padding: 12px 16px; background-color: #1e1d1b; border-bottom: 1px solid #403d39;
+            font-size: 14px; font-style: italic; color: #f0f0f0; min-height: 70px;
+            display: flex; align-items: center; justify-content: center; text-align: center;
+        }
+        .chess-history-list {
+            flex: 1; overflow-y: auto; padding: 10px; font-size: 15px;
+            display: flex; flex-direction: column; gap: 4px; max-height: 300px;
+        }
+        .chess-history-row { display: flex; align-items: center; padding: 6px 10px; border-radius: 4px; font-weight: 500; }
+        .chess-history-row:nth-child(even) { background-color: #2b2a27; }
+        .chess-move-num { width: 35px; color: #888; }
+        .chess-move-white, .chess-move-black { width: 120px; color: #fff; display: flex; align-items: center; gap: 6px; }
+        .chess-move-black { color: #ccc; }
+        .chess-history-badge {
+            width: 18px; height: 18px; background-size: contain;
+            background-repeat: no-repeat; background-position: center; display: inline-block;
+        }
+        .chess-controls { padding: 12px; display: flex; gap: 10px; background-color: #21201d; }
+        .chess-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold;
+            cursor: pointer; font-size: 14px; transition: background 0.2s;
+        }
+        .chess-btn-undo { background-color: #4a4a4a; color: #fff; }
+        .chess-btn-undo:hover { background-color: #5a5a5a; }
+        .chess-btn-reset { background-color: #7fa650; color: #fff; }
+        .chess-btn-reset:hover { background-color: #8fbc5c; }
+        .chess-history-list::-webkit-scrollbar { width: 6px; }
+        .chess-history-list::-webkit-scrollbar-track { background: #21201d; }
+        .chess-history-list::-webkit-scrollbar-thumb { background: #4a4a4a; border-radius: 4px; }
+        .chess-casa.check-animation { animation: chessCheckFlash 1s ease-in-out; }
+        @keyframes chessCheckFlash {
+            0% { box-shadow: inset 0 0 0 0px rgba(255,0,0,0); }
+            50% { box-shadow: inset 0 0 0 10px rgba(255,0,0,0.9); }
+            100% { box-shadow: inset 0 0 0 0px rgba(255,0,0,0); }
+        }
+        .chess-casa.checkmate { box-shadow: inset 0 0 0 8px #ff0000 !important; background-color: transparent !important; border: none !important; }
+        .chess-casa.selected::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            box-shadow: inset 0 0 0 5px rgba(255, 255, 0, 0.8);
+            pointer-events: none; z-index: 15;
+        }
+        .chess-casa.highlight::after {
+            content: ''; position: absolute; width: 35px; height: 35px;
+            background-color: rgba(0, 0, 0, 0.2); border-radius: 50%; pointer-events: none;
+        }
+        .chess-casa.capture::after {
+            content: ''; position: absolute; width: 90%; height: 90%;
+            border: 6px solid rgba(0, 0, 0, 0.2); border-radius: 50%;
+            pointer-events: none; box-sizing: border-box;
+        }
+        .chess-victory-banner {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center;
+            align-items: center; z-index: 1000;
+        }
+        .chess-victory-content {
+            background: #302e2b; padding: 40px; border-radius: 12px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); border: 2px solid #7fa650;
+            color: #fff; min-width: 450px;
+        }
+        .chess-victory-content h1 { color: #ffd700; margin-top: 0; font-size: 42px; text-shadow: 2px 2px 10px #000; }
+        .chess-victory-content h2 { font-size: 18px; color: #bbb; margin-bottom: 20px; }
+        #chess-top-moves-list { list-style: none; padding: 0; margin: 0 0 30px 0; display: flex; flex-direction: column; gap: 12px; }
+        #chess-top-moves-list li {
+            display: flex; align-items: center; justify-content: space-between;
+            background: #21201d; padding: 15px 20px; border-radius: 8px; font-size: 18px; font-weight: bold;
+        }
+        #chess-top-moves-list img { width: 35px; height: 35px; }
+        .chess-victory-buttons { display: flex; gap: 15px; }
+        .chess-victory-buttons button {
+            flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 16px;
+            font-weight: bold; cursor: pointer; transition: background 0.2s;
+            background-color: #7fa650; color: #fff;
+        }
+        .chess-victory-buttons button:hover { background-color: #8fbc5c; }
         @media (max-width: 768px) {
             h1 { font-size: 3.5rem; }
             .subtitle { font-size: 1.1rem; }
@@ -556,6 +733,11 @@
                     <h2>Color Match</h2>
                     <p>Escolha a cor certa, não a palavra escrita!</p>
                 </div>
+                <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('chess')">
+                    <span class="card-icon">♟️</span>
+                    <h2>Xadrez</h2>
+                    <p>Jogue contra a IA ou desafie um amigo no tabuleiro.</p>
+                </div>
                 <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('anagram')">
                     <span class="card-icon">🔤</span>
                     <h2>Anagrama</h2>
@@ -632,8 +814,8 @@
                 </div>
                 <div class="game-sidebar">
                     <h3>Personalização</h3>
-                    <input type="text" id="ttt-p1-input" class="name-input" placeholder="Nome do Jogador 1">
-                    <input type="text" id="ttt-p2-input" class="name-input" placeholder="Nome do Jogador 2 / PC">
+                    <input type="text" id="ttt-p1-input" class="name-input" placeholder="Eu">
+                    <input type="text" id="ttt-p2-input" class="name-input" placeholder="Alguém">
                     <button class="btn-apply" onpointerdown="if(event.button===0 || event.button===2) applyTTTNames()">Salvar Nomes</button>
                     
                     <h3>Placar de Vitórias</h3>
@@ -783,6 +965,70 @@
             </div>
         </div>
 
+        <div id="chess-view" class="view">
+            <button class="btn-back" onpointerdown="if(event.button===0 || event.button===2) openGame('menu')">← Voltar ao Menu</button>
+            <div class="chess-app-container">
+                <div class="chess-left-panel">
+                    <div id="chess-container-tabuleiro">
+                        <div id="chess-coords-y"></div>
+                        <div id="chess-tabuleiro"></div>
+                        <div id="chess-coords-x"></div>
+                    </div>
+                </div>
+                <div class="chess-right-panel">
+                    <div class="chess-panel-header">
+                        <span>Oponente</span>
+                        <span id="chess-ai-status" style="font-size: 13px; color: #7fa650;">Sua vez</span>
+                    </div>
+                    <div class="chess-config-section">
+                        <div class="chess-rating-label" style="font-size: 12px; margin-bottom: 4px;">Modo de Jogo:</div>
+                        <div class="chess-config-row" id="chess-mode-selector">
+                            <button class="chess-mode-btn active" onclick="setChessModo('ia', event)">Vs IA</button>
+                            <button class="chess-mode-btn" onclick="setChessModo('amigo', event)">Vs Amigo</button>
+                        </div>
+                        <div class="chess-rating-label" style="font-size: 12px; margin-top: 8px; margin-bottom: 4px;">Nomes dos Jogadores:</div>
+                        <div class="chess-config-row">
+                            <input type="text" id="chess-p1-name" class="name-input" placeholder="Brancas (Ex: Davi)" style="margin-bottom: 0;">
+                            <input type="text" id="chess-p2-name" class="name-input" placeholder="Pretas (Ex: João)" style="margin-bottom: 0;">
+                        </div>
+                        <button class="btn-apply" onclick="updateChessNames()" style="margin-top: 10px; margin-bottom: 10px;">Salvar Nomes</button>
+                        <div class="chess-rating-label" style="font-size: 12px; margin-top: 8px; margin-bottom: 4px;">Sua Cor (Vs IA):</div>
+                        <div class="chess-config-row" id="chess-color-selector">
+                            <button class="chess-color-btn active" onclick="escolherCorXadrez('branca', event)">Branca</button>
+                            <button class="chess-color-btn" onclick="escolherCorXadrez('preta', event)">Preta</button>
+                            <button class="chess-color-btn" onclick="escolherCorXadrez('aleatorio', event)">Aleatório</button>
+                        </div>
+                    </div>
+                    <div class="chess-rating-control" id="chess-rating-section">
+                        <div class="chess-rating-label">
+                            <span>Nível da IA</span>
+                            <span id="chess-rating-value">1200</span>
+                        </div>
+                        <input type="range" id="chess-rating-slider" min="100" max="2000" step="100" value="1200">
+                    </div>
+                    <div class="chess-ai-chat" id="chess-ai-chat">
+                        "Escolha sua cor e comece a jogar!"
+                    </div>
+                    <div class="chess-panel-header">Placar de Vitórias</div>
+                    <div style="padding: 10px 16px; background-color: #2b2a27; border-bottom: 1px solid #403d39; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 15px; font-weight: 500;">
+                            <span>Player Branco:</span>
+                            <span id="chess-score-brancas" style="color: #7fa650; font-weight: bold; font-size: 16px;">0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 15px; font-weight: 500;">
+                            <span>Player Preto:</span>
+                            <span id="chess-score-pretas" style="color: #7fa650; font-weight: bold; font-size: 16px;">0</span>
+                        </div>
+                    </div>
+                    <div class="chess-panel-header">Histórico</div>
+                    <div class="chess-history-list" id="chess-historico"></div>
+                    <div class="chess-controls">
+                        <button class="chess-btn chess-btn-undo" onclick="desfazerJogadaXadrez()">Desfazer</button>
+                        <button class="chess-btn chess-btn-reset" onclick="reiniciarJogoXadrez()">Reiniciar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="anagram-view" class="view">
             <button class="btn-back" onpointerdown="if(event.button===0 || event.button===2) openGame('menu')">← Voltar ao Menu</button>
             <div class="game-layout">
@@ -839,8 +1085,14 @@
             const header = document.getElementById('main-header');
             if (game === 'menu') {
                 header.style.display = 'block';
+                document.body.classList.remove('chess-active');
             } else {
                 header.style.display = 'none';
+                if (game === 'chess') {
+                    document.body.classList.add('chess-active');
+                } else {
+                    document.body.classList.remove('chess-active');
+                }
             }
             
             clearInterval(memTimerInterval);
@@ -861,8 +1113,9 @@
             if (game === 'hangman') initHangman();
             if (game === 'reaction') initReaction();
             if (game === 'color') initColorMatch();
-            if (game === 'anagram') initAnagram();
-        }
+        if (game === 'anagram') initAnagram();
+        if (game === 'chess') reiniciarJogoXadrez();
+    }
 
         const THEMES = {
             frutas: ["MACA", "BANANA", "UVA", "MORANGO", "LARANJA", "ABACAXI", "MANGA", "PERA"],
@@ -1924,5 +2177,872 @@
             }
         }
     </script>
+<div id="chess-victory-banner" class="chess-victory-banner">
+    <div class="chess-victory-content">
+        <h1>Xeque-Mate!</h1>
+        <h2>Suas Melhores Jogadas</h2>
+        <ul id="chess-top-moves-list"></ul>
+        <div class="chess-victory-buttons">
+            <button onclick="reiniciarJogoXadrez()">Reiniciar</button>
+            <button onclick="reiniciarJogoXadrez()">Nova Partida</button>
+        </div>
+    </div>
+</div>
+<script>
+    const chessTabuleiroEl = document.getElementById('chess-tabuleiro');
+    const chessHistoricoEl = document.getElementById('chess-historico');
+    const chessChatEl = document.getElementById('chess-ai-chat');
+    const chessStatusEl = document.getElementById('chess-ai-status');
+    const chessRatingSlider = document.getElementById('chess-rating-slider');
+    const chessRatingValue = document.getElementById('chess-rating-value');
+    
+    const chessSomMovimento = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_mp3_/default/move-self.mp3');
+    const chessSomCaptura = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_mp3_/default/capture.mp3');
+
+    const chessImagensPecas = {
+        'T': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bR.svg',
+        'C': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bN.svg',
+        'B': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bB.svg',
+        'D': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bQ.svg',
+        'R': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bK.svg',
+        'P': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/bP.svg',
+        't': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wR.svg',
+        'c': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wN.svg',
+        'b': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wB.svg',
+        'd': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wQ.svg',
+        'r': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wK.svg',
+        'p': 'https://raw.githubusercontent.com/lichess-org/lila/master/public/piece/cburnett/wP.svg'
+    };
+
+    const chessBadges = {
+        'brilhante': 'https://i.postimg.cc/d3GSVKxh/BRILHANTE.gif',
+        'excelente': 'https://i.postimg.cc/xddG4SGx/Exelente-Jogada-removebg-preview.png',
+        'melhor': 'https://i.postimg.cc/W4fmRfX1/Melhor-removebg-preview.png',
+        'bom': 'https://i.postimg.cc/qRP8qhPG/Bom-removebg-preview.png',
+        'ok': 'https://i.postimg.cc/3rGX61GB/Ok-removebg-preview.png',
+        'livro': 'https://i.postimg.cc/Nfw6wX7g/Livro-removebg-preview.png',
+        'imprecisao': 'https://i.postimg.cc/5Nqw9tnS/MDS-removebg-preview.png',
+        'erro_oportunidade': 'https://i.postimg.cc/5y5FtPqf/Pra-que-removebg-preview.png',
+        'erro': 'https://i.postimg.cc/GpB8D3Jg/Erro-removebg-preview.png',
+        'erro_grave': 'https://i.postimg.cc/WpmDgHgs/NAOO-removebg-preview.png'
+    };
+
+    const chessFrasesIA = [
+        "Essa foi fraca, tente de novo.",
+        "Você realmente achou que isso ia funcionar?",
+        "Sua jogada não é nada contra a minha próxima.",
+        "Interessante... mas insuficiente.",
+        "Estou apenas aquecendo.",
+        "Cuidado com o seu rei!",
+        "Boa tentativa, humano.",
+        "O tabuleiro está sob meu controle."
+    ];
+
+    const chessEstadoInicial = [
+        ['T', 'C', 'B', 'D', 'R', 'B', 'C', 'T'],
+        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['', '', '', '', '', '', '', ''],
+        ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+        ['t', 'c', 'b', 'd', 'r', 'b', 'c', 't']
+    ];
+
+    let chessEstado = JSON.parse(JSON.stringify(chessEstadoInicial));
+    let chessHistoricoEstados = [];
+    let chessHistoricoMovimentos = [];
+    let chessTurnoBrancas = true;
+    let chessOrigemX = null;
+    let chessOrigemY = null;
+    let chessIaJogando = false;
+    
+    let chessModoJogo = 'ia';
+    let chessJogadorEhBranca = true;
+    let chessMostrarBadgesJogador = true;
+    let chessMostrarBadgesIA = true;
+    
+    let chessEmCheck = false;
+    let chessEmCheckmate = false;
+    let chessJogoAcabou = false;
+    let chessReiCheckPos = null;
+
+    let chessP1Name = "Brancas";
+    let chessP2Name = "Pretas";
+    let chessVitoriasBrancas = 0;
+    let chessVitoriasPretas = 0;
+
+    function updateChessScoreboard() {
+        const elB = document.getElementById('chess-score-brancas');
+        const elP = document.getElementById('chess-score-pretas');
+        if (elB) elB.textContent = chessVitoriasBrancas;
+        if (elP) elP.textContent = chessVitoriasPretas;
+    }
+
+    function registrarVitoriaXadrez(vencedorEhBranca) {
+        if (vencedorEhBranca) chessVitoriasBrancas++;
+        else chessVitoriasPretas++;
+        updateChessScoreboard();
+    }
+
+    let chessEstatisticas = {
+        brilhante: 0, excelente: 0, melhor: 0, bom: 0, ok: 0,
+        livro: 0, imprecisao: 0, erro_oportunidade: 0, erro: 0, erro_grave: 0
+    };
+
+    function updateChessNames() {
+        const in1 = document.getElementById('chess-p1-name').value.trim();
+        const in2 = document.getElementById('chess-p2-name').value.trim();
+        chessP1Name = in1 || "Brancas";
+        chessP2Name = in2 || "Pretas";
+        updateChessStatus();
+    }
+
+    function updateChessStatus() {
+        if (chessJogoAcabou) return;
+        if (chessModoJogo === 'ia') {
+            if (chessTurnoBrancas === chessJogadorEhBranca) {
+                chessStatusEl.textContent = "Sua vez";
+                chessStatusEl.style.color = "#7fa650";
+            } else {
+                chessStatusEl.textContent = "IA pensando...";
+                chessStatusEl.style.color = "#e8c757";
+            }
+        } else {
+            chessStatusEl.textContent = chessTurnoBrancas ? `Vez de ${chessP1Name}` : `Vez de ${chessP2Name}`;
+            chessStatusEl.style.color = "#7fa650";
+        }
+    }
+
+    chessRatingSlider.addEventListener('input', (e) => {
+        chessRatingValue.textContent = e.target.value;
+    });
+
+    function setChessModo(modo, e) {
+        chessModoJogo = modo;
+        document.querySelectorAll('.chess-mode-btn').forEach(btn => btn.classList.remove('active'));
+        if (e) e.target.classList.add('active');
+
+        if (modo === 'amigo') {
+            chessJogadorEhBranca = true;
+            chessTurnoBrancas = true;
+            document.getElementById('chess-color-selector').style.display = 'none';
+            document.getElementById('chess-rating-section').style.display = 'none';
+            chessChatEl.textContent = '"Modo 2 Jogadores ativado!"';
+        } else {
+            document.getElementById('chess-color-selector').style.display = 'flex';
+            document.getElementById('chess-rating-section').style.display = 'flex';
+            chessChatEl.textContent = '"Modo IA ativado!"';
+        }
+        updateChessNames();
+        reiniciarJogoXadrez();
+    }
+
+    function escolherCorXadrez(cor, e) {
+        document.querySelectorAll('.chess-color-btn').forEach(btn => btn.classList.remove('active'));
+        if (e) e.target.classList.add('active');
+        
+        if (cor === 'branca') {
+            chessJogadorEhBranca = true;
+        } else if (cor === 'preta') {
+            chessJogadorEhBranca = false;
+        } else {
+            chessJogadorEhBranca = Math.random() < 0.5;
+        }
+        
+        reiniciarJogoXadrez();
+    }
+
+    function chessEhBranca(peca) {
+        return peca === peca.toLowerCase() && peca !== '';
+    }
+
+    function chessGetCoordenada(x, y) {
+        const arquivos = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const fileiras = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        return arquivos[x] + fileiras[y];
+    }
+
+    function chessValorPeca(peca) {
+        const tipo = peca.toUpperCase();
+        if (tipo === 'P') return 1;
+        if (tipo === 'C' || tipo === 'B') return 3;
+        if (tipo === 'T') return 5;
+        if (tipo === 'D') return 9;
+        if (tipo === 'R') return 100;
+        return 0;
+    }
+
+    function chessCaminhoLivre(x1, y1, x2, y2) {
+        let dx = Math.sign(x2 - x1);
+        let dy = Math.sign(y2 - y1);
+        let x = x1 + dx;
+        let y = y1 + dy;
+
+        while (x !== x2 || y !== y2) {
+            if (chessEstado[y][x] !== '') return false;
+            x += dx;
+            y += dy;
+        }
+        return true;
+    }
+
+    function chessValidarMovimentoBruto(x1, y1, x2, y2) {
+        const peca = chessEstado[y1][x1];
+        const destino = chessEstado[y2][x2];
+
+        if (peca === '') return false;
+        if (destino !== '' && chessEhBranca(peca) === chessEhBranca(destino)) return false;
+
+        const dx = Math.abs(x2 - x1);
+        const dy = Math.abs(y2 - y1);
+        const tipo = peca.toUpperCase();
+
+        if (tipo === 'P') {
+            const direcao = chessEhBranca(peca) ? -1 : 1;
+            const linhaInicial = chessEhBranca(peca) ? 6 : 1;
+
+            if (x1 === x2 && destino === '') {
+                if (y2 === y1 + direcao) return true;
+                if (y1 === linhaInicial && y2 === y1 + (2 * direcao) && chessCaminhoLivre(x1, y1, x2, y2)) return true;
+            }
+            if (dx === 1 && y2 === y1 + direcao && destino !== '' && chessEhBranca(peca) !== chessEhBranca(destino)) {
+                return true;
+            }
+        }
+
+        if (tipo === 'C') {
+            if ((dx === 2 && dy === 1) || (dx === 1 && dy === 2)) return true;
+        }
+
+        if (tipo === 'B') {
+            if (dx === dy) return chessCaminhoLivre(x1, y1, x2, y2);
+        }
+
+        if (tipo === 'T') {
+            if (x1 === x2 || y1 === y2) return chessCaminhoLivre(x1, y1, x2, y2);
+        }
+
+        if (tipo === 'D') {
+            if (dx === dy || x1 === x2 || y1 === y2) return chessCaminhoLivre(x1, y1, x2, y2);
+        }
+
+        if (tipo === 'R') {
+            if (dx <= 1 && dy <= 1) return true;
+        }
+
+        return false;
+    }
+
+    function chessValidarMovimento(x1, y1, x2, y2, isBranca) {
+        const peca = chessEstado[y1][x1];
+        if (peca === '') return false;
+        if (chessEhBranca(peca) !== isBranca) return false;
+        if (!chessValidarMovimentoBruto(x1, y1, x2, y2)) return false;
+        
+        const pecaDestino = chessEstado[y2][x2];
+        chessEstado[y2][x2] = chessEstado[y1][x1];
+        chessEstado[y1][x1] = '';
+        
+        const emXeque = chessEhXeque(isBranca);
+        
+        chessEstado[y1][x1] = chessEstado[y2][x2];
+        chessEstado[y2][x2] = pecaDestino;
+        
+        return !emXeque;
+    }
+
+    function chessAvaliarJogada(y1, x2, y2, pecaMovida, pecaCapturada) {
+        if (pecaCapturada !== '') {
+            const valorMovida = chessValorPeca(pecaMovida);
+            const valorCapturada = chessValorPeca(pecaCapturada);
+            
+            if (valorCapturada > valorMovida) return 'brilhante';
+            if (valorCapturada === valorMovida && valorCapturada >= 3) return 'excelente';
+            return 'bom';
+        }
+
+        if (y1 === 6 || y1 === 1) {
+            if (Math.random() > 0.3) return 'livro';
+        }
+
+        const aleatorio = Math.random();
+        if (aleatorio < 0.05) return 'erro_grave';
+        if (aleatorio < 0.15) return 'erro';
+        if (aleatorio < 0.25) return 'erro_oportunidade';
+        if (aleatorio < 0.35) return 'imprecisao';
+        if (aleatorio < 0.55) return 'ok';
+        if (aleatorio < 0.75) return 'bom';
+        return 'melhor';
+    }
+
+    function chessAtualizarEstatisticasUI() {
+        for (const chave in chessEstatisticas) {
+            const el = document.getElementById('count-' + chave);
+            if (el) {
+                el.textContent = chessEstatisticas[chave];
+            }
+        }
+    }
+
+    function chessAtualizarHistoricoUI() {
+        chessHistoricoEl.innerHTML = '';
+        for (let i = 0; i < chessHistoricoMovimentos.length; i++) {
+            const mov = chessHistoricoMovimentos[i];
+            const row = document.createElement('div');
+            row.classList.add('chess-history-row');
+            
+            const num = document.createElement('div');
+            num.classList.add('chess-move-num');
+            num.textContent = Math.floor(i / 2 + 1) + '.';
+            
+            const moveText = document.createElement('div');
+            moveText.classList.add(mov.isBranca ? 'chess-move-white' : 'chess-move-black');
+            
+            const textNode = document.createElement('span');
+            textNode.textContent = mov.notacao;
+            moveText.appendChild(textNode);
+
+            if (mov.classificacao) {
+                const icon = document.createElement('div');
+                icon.classList.add('chess-history-badge');
+                icon.style.backgroundImage = `url('${chessBadges[mov.classificacao]}')`;
+                moveText.appendChild(icon);
+            }
+
+            row.appendChild(num);
+            row.appendChild(moveText);
+            chessHistoricoEl.appendChild(row);
+        }
+        chessHistoricoEl.scrollTop = chessHistoricoEl.scrollHeight;
+    }
+
+    function chessSalvarEstado() {
+        chessHistoricoEstados.push({
+            estado: JSON.parse(JSON.stringify(chessEstado)),
+            turnoBrancas: chessTurnoBrancas,
+            estatisticas: JSON.parse(JSON.stringify(chessEstatisticas)),
+            historicoMovimentos: JSON.parse(JSON.stringify(chessHistoricoMovimentos))
+        });
+    }
+
+    function desfazerJogadaXadrez() {
+        if (chessHistoricoEstados.length === 0 || chessIaJogando) return;
+        
+        let ultimoEstado = chessHistoricoEstados.pop();
+
+        if (chessModoJogo === 'ia' && ultimoEstado.turnoBrancas !== chessJogadorEhBranca && chessHistoricoEstados.length > 0) {
+            ultimoEstado = chessHistoricoEstados.pop();
+        }
+
+        chessEstado = ultimoEstado.estado;
+        chessTurnoBrancas = ultimoEstado.turnoBrancas;
+        chessEstatisticas = ultimoEstado.estatisticas;
+        chessHistoricoMovimentos = ultimoEstado.historicoMovimentos;
+        
+        chessAtualizarEstatisticasUI();
+        chessAtualizarHistoricoUI();
+        chessRenderizarTabuleiro();
+        
+        if (chessModoJogo === 'ia') {
+            if (chessTurnoBrancas === chessJogadorEhBranca) {
+                updateChessStatus();
+            } else {
+                updateChessStatus();
+                setTimeout(chessJogarIA, 500);
+            }
+        } else {
+            updateChessStatus();
+        }
+    }
+
+    function reiniciarJogoXadrez() {
+        if (chessIaJogando) return;
+        chessEstado = JSON.parse(JSON.stringify(chessEstadoInicial));
+        chessHistoricoEstados = [];
+        chessHistoricoMovimentos = [];
+        chessTurnoBrancas = true;
+        chessEstatisticas = { brilhante: 0, excelente: 0, melhor: 0, bom: 0, ok: 0, livro: 0, imprecisao: 0, erro_oportunidade: 0, erro: 0, erro_grave: 0 };
+        chessIaJogando = false;
+        chessEmCheck = false;
+        chessEmCheckmate = false;
+        chessJogoAcabou = false;
+        chessReiCheckPos = null;
+        document.getElementById('chess-victory-banner').style.display = 'none';
+        
+        chessAtualizarEstatisticasUI();
+        chessAtualizarHistoricoUI();
+        chessRenderizarTabuleiro();
+        
+        if (chessModoJogo === 'ia') {
+            if (chessJogadorEhBranca) {
+                chessChatEl.textContent = '"Você joga de Brancas. Boa sorte!"';
+                updateChessStatus();
+            } else {
+                chessChatEl.textContent = '"Você joga de Pretas. Eu começo!"';
+                updateChessStatus();
+                setTimeout(() => chessJogarIA(), 1000);
+            }
+        } else {
+            chessChatEl.textContent = '"Modo 2 Jogadores ativado!"';
+            updateChessStatus();
+        }
+    }   
+
+    function chessMostrarFeedback(x, y, tipoJogada) {
+        const casa = document.querySelector(`.chess-casa[data-x="${x}"][data-y="${y}"]`);
+        if (!casa) return;
+
+        const badge = document.createElement('div');
+        badge.classList.add('chess-move-badge');
+        badge.style.backgroundImage = `url('${chessBadges[tipoJogada]}')`;
+        casa.appendChild(badge);
+
+        setTimeout(() => {
+            badge.classList.add('fade-out');
+            setTimeout(() => badge.remove(), 400);
+        }, 1500);
+    }
+
+    function chessEncontrarRei(isBranca) {
+        const reiChar = isBranca ? 'r' : 'R';
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                if (chessEstado[y][x] === reiChar) return { x, y };
+            }
+        }
+        return null;
+    }
+
+    function chessEhXeque(isBranca) {
+        const rei = chessEncontrarRei(isBranca);
+        if (!rei) return false;
+        
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                const peca = chessEstado[y][x];
+                if (peca !== '' && chessEhBranca(peca) !== isBranca) {
+                    if (chessValidarMovimentoBruto(x, y, rei.x, rei.y)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function chessTemMovimentosLegais(isBranca) {
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                const peca = chessEstado[y][x];
+                if (peca !== '' && chessEhBranca(peca) === isBranca) {
+                    for (let ty = 0; ty < 8; ty++) {
+                        for (let tx = 0; tx < 8; tx++) {
+                            if (chessValidarMovimento(x, y, tx, ty, isBranca)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    function chessObterTodosMovimentos(isBranca) {
+        const movimentos = [];
+        for (let y = 0; y < 8; y++) {
+            for (let x = 0; x < 8; x++) {
+                const peca = chessEstado[y][x];
+                if (peca !== '' && chessEhBranca(peca) === isBranca) {
+                    for (let ty = 0; ty < 8; ty++) {
+                        for (let tx = 0; tx < 8; tx++) {
+                            if (chessValidarMovimento(x, y, tx, ty, isBranca)) {
+                                movimentos.push({ x1: x, y1: y, x2: tx, y2: ty, peca, capturada: chessEstado[ty][tx] });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return movimentos;
+    }
+
+    function chessExecutarMovimento(x1, y1, x2, y2, isIA = false) {
+        const pecaMovida = chessEstado[y1][x1];
+        const pecaCapturada = chessEstado[y2][x2];
+        
+        if (pecaCapturada === 'r' || pecaCapturada === 'R') {
+            chessJogoAcabou = true;
+            chessEmCheckmate = true;
+            registrarVitoriaXadrez(chessTurnoBrancas);
+            setTimeout(() => {
+                const titulo = document.querySelector('.chess-victory-content h1');
+                titulo.textContent = (chessTurnoBrancas === chessJogadorEhBranca) ? "Rei Capturado! Você Venceu!" : "Seu Rei foi Capturado! Você Perdeu!";
+                document.getElementById('chess-victory-banner').style.display = 'flex';
+            }, 2000);
+            return;
+        }
+        
+        if (pecaCapturada !== '') {
+            chessSomCaptura.play().catch(e => {});
+        } else {
+            chessSomMovimento.play().catch(e => {});
+        }
+
+        const classificacao = chessAvaliarJogada(y1, x2, y2, pecaMovida, pecaCapturada);
+        if (!isIA) {
+            chessEstatisticas[classificacao]++;
+            if (chessMostrarBadgesJogador) {
+                setTimeout(() => chessMostrarFeedback(x2, y2, classificacao), 20);
+            }
+        } else {
+            if (chessMostrarBadgesIA) {
+                setTimeout(() => chessMostrarFeedback(x2, y2, classificacao), 20);
+            }
+        }
+        
+        const notacao = chessGetCoordenada(x1, y1) + '-' + chessGetCoordenada(x2, y2);
+        chessHistoricoMovimentos.push({
+            notacao: notacao,
+            classificacao: classificacao,
+            isBranca: chessEhBranca(pecaMovida)
+        });
+
+        chessEstado[y2][x2] = chessEstado[y1][x1];
+        chessEstado[y1][x1] = '';
+
+        if (chessEstado[y2][x2] === 'p' && y2 === 0) {
+            chessEstado[y2][x2] = 'd';
+        } else if (chessEstado[y2][x2] === 'P' && y2 === 7) {
+            chessEstado[y2][x2] = 'D';
+        }
+
+        chessTurnoBrancas = !chessTurnoBrancas;
+
+        chessEmCheck = false;
+        chessEmCheckmate = false;
+        chessJogoAcabou = false;
+        chessReiCheckPos = null;
+
+        const emXequeAgora = chessEhXeque(chessTurnoBrancas);
+        const temMovimentos = chessTemMovimentosLegais(chessTurnoBrancas);
+
+        if (emXequeAgora) {
+            const rei = chessEncontrarRei(chessTurnoBrancas);
+            chessReiCheckPos = { x: rei.x, y: rei.y };
+            chessEmCheck = true;
+        }
+
+        if (!temMovimentos) {
+            chessJogoAcabou = true;
+            chessEmCheckmate = emXequeAgora;
+            
+            if (chessEmCheckmate) {
+                registrarVitoriaXadrez(!chessTurnoBrancas);
+            }
+            
+            setTimeout(() => {
+                const topMovesEl = document.getElementById('chess-top-moves-list');
+                topMovesEl.innerHTML = '';
+
+                const mapaNomes = {
+                    'brilhante': 'Brilhante',
+                    'excelente': 'Excelente',
+                    'melhor': 'Melhor',
+                    'bom': 'Bom',
+                    'ok': 'Ok',
+                    'livro': 'Livro'
+                };
+
+                const melhoresJogadas = Object.entries(chessEstatisticas)
+                .filter(([chave, valor]) => valor > 0 && mapaNomes[chave])
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+
+                if (melhoresJogadas.length === 0) {
+                    const li = document.createElement('li');
+                    li.textContent = 'Nenhuma jogada classificada.';
+                    li.style.justifyContent = 'center';
+                    topMovesEl.appendChild(li);
+                } else {
+                    melhoresJogadas.forEach(([chave, valor]) => {
+                        const li = document.createElement('li');
+                        
+                        const text = document.createElement('span');
+                        text.textContent = `${mapaNomes[chave]}`;
+                        
+                        const rightSide = document.createElement('div');
+                        rightSide.style.display = 'flex';
+                        rightSide.style.alignItems = 'center';
+                        rightSide.style.gap = '12px';
+                        
+                        const qtd = document.createElement('span');
+                        qtd.textContent = `${valor}x`;
+                        qtd.style.color = '#7fa650';
+                        
+                        const icon = document.createElement('img');
+                        icon.src = chessBadges[chave];
+                        
+                        rightSide.appendChild(qtd);
+                        rightSide.appendChild(icon);
+                        
+                        li.appendChild(text);
+                        li.appendChild(rightSide);
+                        topMovesEl.appendChild(li);
+                    });
+                }
+                
+                const titulo = document.querySelector('.chess-victory-content h1');
+                if (chessModoJogo === 'amigo') {
+                    if (chessEmCheckmate) {
+                        titulo.textContent = chessTurnoBrancas ? `Xeque-Mate! Vitória de ${chessP2Name}!` : `Xeque-Mate! Vitória de ${chessP1Name}!`;
+                    } else {
+                        titulo.textContent = "Empate (Rei Afogado)!";
+                    }
+                } else {
+                    if (chessEmCheckmate) {
+                        titulo.textContent = (chessTurnoBrancas === chessJogadorEhBranca) ? "Você Perdeu!" : "Xeque-Mate! Vitória!";
+                    } else {
+                        titulo.textContent = "Empate (Rei Afogado)!";
+                    }
+                }
+
+                document.getElementById('chess-victory-banner').style.display = 'flex';
+            }, 5000);
+        } else {
+            document.getElementById('chess-victory-banner').style.display = 'none';
+        }
+
+        chessAtualizarEstatisticasUI();
+        chessAtualizarHistoricoUI();
+        chessRenderizarTabuleiro();
+
+        if (chessModoJogo === 'ia') {
+            if (!chessJogoAcabou) {
+                if (chessTurnoBrancas !== chessJogadorEhBranca) {
+                    chessJogarIA();
+                } else {
+                    updateChessStatus();
+                }
+            }
+        } else {
+            if (!chessJogoAcabou) {
+                updateChessStatus();
+            }
+        }
+    }
+
+    function chessJogarIA() {
+        if (chessJogoAcabou) return;
+        chessIaJogando = true;
+        chessStatusEl.textContent = "IA pensando...";
+        chessStatusEl.style.color = "#e8c757";
+        
+        const rating = parseInt(chessRatingSlider.value);
+        
+        setTimeout(() => {
+            const movimentos = chessObterTodosMovimentos(!chessJogadorEhBranca);
+            if (movimentos.length === 0) {
+                chessIaJogando = false;
+                chessStatusEl.textContent = "Fim de jogo";
+                return;
+            }
+
+            let escolha = movimentos[0];
+
+            if (rating <= 400) {
+                escolha = movimentos[Math.floor(Math.random() * movimentos.length)];
+            } else {
+                let melhorScore = -Infinity;
+                
+                for (let mov of movimentos) {
+                    let score = 0;
+                    if (mov.capturada !== '') {
+                        score += chessValorPeca(mov.capturada) * 10;
+                    }
+
+                    if (rating > 1000) {
+                        const centroX = Math.abs(3.5 - mov.x2);
+                        const centroY = Math.abs(3.5 - mov.y2);
+                        score += (7 - (centroX + centroY));
+                        
+                        if (Math.random() < 0.2) score -= 5;
+                    }
+
+                    if (score > melhorScore) {
+                        melhorScore = score;
+                        escolha = mov;
+                    }
+                }
+            }
+
+            chessSalvarEstado();
+            chessIaJogando = false;
+            chessExecutarMovimento(escolha.x1, escolha.y1, escolha.x2, escolha.y2, true);
+            
+            if (Math.random() > 0.3) {
+                const frase = chessFrasesIA[Math.floor(Math.random() * chessFrasesIA.length)];
+                chessChatEl.textContent = `"${frase}"`;
+            }
+
+        }, 1000);
+    }
+
+    function chessRenderizarTabuleiro() {
+        chessTabuleiroEl.innerHTML = '';
+        const coordsY = document.getElementById('chess-coords-y');
+        const coordsX = document.getElementById('chess-coords-x');
+        coordsY.innerHTML = '';
+        coordsX.innerHTML = '';
+
+        const yValues = chessJogadorEhBranca ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
+        const xValues = chessJogadorEhBranca ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
+
+        yValues.forEach(y => {
+            const span = document.createElement('span');
+            span.textContent = 8 - y;
+            coordsY.appendChild(span);
+        });
+
+        xValues.forEach(x => {
+            const span = document.createElement('span');
+            span.textContent = ['a','b','c','d','e','f','g','h'][x];
+            coordsX.appendChild(span);
+        });
+
+        for (let vy = 0; vy < 8; vy++) {
+            for (let vx = 0; vx < 8; vx++) {
+                const y = yValues[vy];
+                const x = xValues[vx];
+                
+                const casa = document.createElement('div');
+                casa.classList.add('chess-casa');
+
+                if ((x + y) % 2 === 0) {
+                    casa.classList.add('branca');
+                } else {
+                    casa.classList.add('verde');
+                }
+
+                casa.dataset.x = x;
+                casa.dataset.y = y;
+
+                if (chessReiCheckPos && chessReiCheckPos.x === x && chessReiCheckPos.y === y) {
+                    if (chessEmCheckmate) {
+                        casa.classList.add('checkmate');
+                    } else if (chessEmCheck) {
+                        casa.classList.add('check-animation');
+                    }
+                }
+
+                const pecaChar = chessEstado[y][x];
+                if (pecaChar !== '') {
+                    const peca = document.createElement('div');
+                    peca.classList.add('chess-peca');
+                    
+                    const img = document.createElement('img');
+                    img.src = chessImagensPecas[pecaChar];
+                    peca.appendChild(img);
+
+                    casa.appendChild(peca);
+                }
+
+                casa.addEventListener('pointerdown', (e) => {
+                    if (e.button !== 0 && e.button !== 2) return;
+                    if (chessIaJogando || chessJogoAcabou) return;
+                    
+                    const destinoX = parseInt(casa.dataset.x);
+                    const destinoY = parseInt(casa.dataset.y);
+
+                    if (chessOrigemX === null) {
+                        const peca = chessEstado[destinoY][destinoX];
+                        if (peca !== '') {
+                            const isBranca = chessEhBranca(peca);
+                            let podeMover = false;
+                            if (chessModoJogo === 'ia') {
+                                if (isBranca === chessJogadorEhBranca && chessTurnoBrancas === chessJogadorEhBranca) podeMover = true;
+                            } else {
+                                if (isBranca === chessTurnoBrancas) podeMover = true;
+                            }
+                            
+                            if (podeMover) {
+                                chessOrigemX = destinoX;
+                                chessOrigemY = destinoY;
+                                document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                                casa.classList.add('selected');
+                                for (let ty = 0; ty < 8; ty++) {
+                                    for (let tx = 0; tx < 8; tx++) {
+                                        if (chessValidarMovimento(chessOrigemX, chessOrigemY, tx, ty, chessTurnoBrancas)) {
+                                            const c = document.querySelector(`.chess-casa[data-x="${tx}"][data-y="${ty}"]`);
+                                            if (chessEstado[ty][tx] !== '') c.classList.add('capture');
+                                            else c.classList.add('highlight');
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if (chessOrigemX === destinoX && chessOrigemY === destinoY) {
+                            chessOrigemX = null;
+                            chessOrigemY = null;
+                            document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                            return;
+                        }
+
+                        if (chessValidarMovimento(chessOrigemX, chessOrigemY, destinoX, destinoY, chessTurnoBrancas)) {
+                            const salvarX = chessOrigemX;
+                            const salvarY = chessOrigemY;
+                            chessOrigemX = null;
+                            chessOrigemY = null;
+                            document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                            chessSalvarEstado();
+                            chessExecutarMovimento(salvarX, salvarY, destinoX, destinoY, false);
+                        } else {
+                            const peca = chessEstado[destinoY][destinoX];
+                            if (peca !== '') {
+                                const isBranca = chessEhBranca(peca);
+                                let podeMover = false;
+                                if (chessModoJogo === 'ia') {
+                                    if (isBranca === chessJogadorEhBranca && chessTurnoBrancas === chessJogadorEhBranca) podeMover = true;
+                                } else {
+                                    if (isBranca === chessTurnoBrancas) podeMover = true;
+                                }
+                                
+                                if (podeMover) {
+                                    chessOrigemX = destinoX;
+                                    chessOrigemY = destinoY;
+                                    document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                                    casa.classList.add('selected');
+                                    for (let ty = 0; ty < 8; ty++) {
+                                        for (let tx = 0; tx < 8; tx++) {
+                                            if (chessValidarMovimento(chessOrigemX, chessOrigemY, tx, ty, chessTurnoBrancas)) {
+                                                const c = document.querySelector(`.chess-casa[data-x="${tx}"][data-y="${ty}"]`);
+                                                if (chessEstado[ty][tx] !== '') c.classList.add('capture');
+                                                else c.classList.add('highlight');
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    chessOrigemX = null;
+                                    chessOrigemY = null;
+                                    document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                                }
+                            } else {
+                                chessOrigemX = null;
+                                chessOrigemY = null;
+                                document.querySelectorAll('.chess-casa').forEach(c => c.classList.remove('highlight', 'capture', 'selected'));
+                            }
+                        }
+                    }
+                });
+
+                chessTabuleiroEl.appendChild(casa);
+            }
+        }
+    }
+
+    chessRenderizarTabuleiro();
+</script>
 </body>
 </html>
