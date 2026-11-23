@@ -363,15 +363,6 @@
         .ttt-cell:hover { background: rgba(255,255,255,0.2); }
         .ttt-cell.win { background: rgba(74, 222, 128, 0.4); border-color: #4ade80; }
 
-        .rps-choices { display: flex; gap: 30px; margin-top: 30px; }
-        .rps-btn {
-            font-size: 5rem; background: none; border: none; cursor: pointer;
-            transition: transform 0.2s, filter 0.2s; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
-        }
-        .rps-btn:hover { transform: scale(1.2); filter: drop-shadow(0 0 20px rgba(255,255,255,0.6)); }
-        .rps-result { font-size: 1.5rem; font-weight: 600; margin-top: 20px; text-align: center; min-height: 80px; }
-        .rps-score { font-size: 1.2rem; margin-bottom: 10px; color: #ffd93b; }
-
         .guess-input-area { display: flex; gap: 10px; margin-top: 20px; }
         .guess-input-area input {
             width: 150px; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3);
@@ -653,8 +644,6 @@
             .math-btn { font-size: 1.8rem; padding: 15px; }
             .memory-card { font-size: 2.5rem; }
             .ttt-cell { width: 75px; height: 75px; font-size: 2.5rem; }
-            .rps-btn { font-size: 3.5rem; }
-            .rps-choices { gap: 15px; }
             .genius-btn { width: 100px; height: 100px; }
             .mole-hole { width: 75px; height: 75px; }
             .mole-char { font-size: 2.5rem; }
@@ -698,10 +687,20 @@
                     <h2>Jogo da Velha</h2>
                     <p>Jogue contra o robô ou desafie um amigo!</p>
                 </div>
-                <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('rps')">
-                    <span class="card-icon">✊</span>
-                    <h2>Pedra, Papel e Tesoura</h2>
-                    <p>Jogue contra o computador e tente a sorte.</p>
+                <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('quiz')">
+                    <span class="card-icon">❓</span>
+                    <h2>Quiz Educativo</h2>
+                    <p>Responda perguntas de conhecimentos gerais e ganhe pontos.</p>
+                </div>
+                <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('capital')">
+                    <span class="card-icon">🌍</span>
+                    <h2>Capital Match</h2>
+                    <p>Escolha a capital correta do país mostrado.</p>
+                </div>
+                <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('sequence')">
+                    <span class="card-icon">🔢</span>
+                    <h2>Sequência Lógica</h2>
+                    <p>Descubra qual número completa a sequência.</p>
                 </div>
                 <div class="card" onpointerdown="if(event.button===0 || event.button===2) openGame('guess')">
                     <span class="card-icon">🎯</span>
@@ -760,6 +759,7 @@
                         <option value="facil">🟢 Fácil (8x8)</option>
                         <option value="medio">🟡 Médio (10x10)</option>
                         <option value="dificil">🔴 Difícil (12x12)</option>
+                        <option value="infinito">♾️ Infinito</option>
                     </select>
                 </div>
                 
@@ -836,17 +836,47 @@
             </div>
         </div>
 
-        <div id="rps-view" class="view">
+        <div id="quiz-view" class="view">
             <button class="btn-back" onpointerdown="if(event.button===0 || event.button===2) openGame('menu')">← Voltar ao Menu</button>
             <div class="game-container">
-                <h2>Pedra, Papel e Tesoura</h2>
-                <div id="rps-score" class="rps-score">Você: 0 | PC: 0</div>
-                <div id="rps-result" class="rps-result">Escolha uma opção abaixo!</div>
-                <div class="rps-choices">
-                    <button class="rps-btn" onpointerdown="if(event.button===0 || event.button===2) playRPS('pedra')">✊</button>
-                    <button class="rps-btn" onpointerdown="if(event.button===0 || event.button===2) playRPS('papel')">✋</button>
-                    <button class="rps-btn" onpointerdown="if(event.button===0 || event.button===2) playRPS('tesoura')">✌️</button>
+                <h2>Quiz Educativo</h2>
+                <div class="top-stats">
+                    <span id="quiz-score">Pontos: 0</span>
+                    <span id="quiz-timer">Tempo: 0s</span>
                 </div>
+                <div id="quiz-question" class="math-question" style="font-size:2rem; text-align:center;"></div>
+                <div id="quiz-options" class="math-options"></div>
+                <p id="quiz-status" style="margin-top:20px;font-weight:bold;color:#ffd93b;text-align:center;"></p>
+            </div>
+        </div>
+
+        <div id="capital-view" class="view">
+            <button class="btn-back" onpointerdown="if(event.button===0 || event.button===2) openGame('menu')">← Voltar ao Menu</button>
+            <div class="game-container">
+                <h2>Capital Match</h2>
+                <div class="top-stats">
+                    <span id="capital-score">Pontos: 0</span>
+                    <span id="capital-timer">Tempo: 0s</span>
+                </div>
+                <p style="margin-top:10px;color:#aaa;">Qual é a capital deste país?</p>
+                <div id="capital-target" class="color-match-target"></div>
+                <div id="capital-options" class="math-options"></div>
+                <p id="capital-status" style="margin-top:20px;font-weight:bold;color:#ffd93b;text-align:center;"></p>
+            </div>
+        </div>
+
+        <div id="sequence-view" class="view">
+            <button class="btn-back" onpointerdown="if(event.button===0 || event.button===2) openGame('menu')">← Voltar ao Menu</button>
+            <div class="game-container">
+                <h2>Sequência Lógica</h2>
+                <div class="top-stats">
+                    <span id="sequence-score">Pontos: 0</span>
+                    <span id="sequence-timer">Tempo: 0s</span>
+                </div>
+                <p style="margin-top:10px;color:#aaa;">Qual número completa a sequência?</p>
+                <div id="sequence-target" class="math-question" style="font-size:3rem;"></div>
+                <div id="sequence-options" class="math-options"></div>
+                <p id="sequence-status" style="margin-top:20px;font-weight:bold;color:#ffd93b;text-align:center;"></p>
             </div>
         </div>
 
@@ -1063,6 +1093,35 @@
     </div>
 
     <script>
+        const AudioFX = (() => {
+            let ctx;
+            function init() {
+                if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+                if (ctx.state === 'suspended') ctx.resume();
+            }
+            function tone(freq, dur, type = 'sine', vol = 0.08, delay = 0) {
+                init();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = type;
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0, ctx.currentTime + delay);
+                g.gain.linearRampToValueAtTime(vol, ctx.currentTime + delay + 0.01);
+                g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + dur);
+                o.connect(g).connect(ctx.destination);
+                o.start(ctx.currentTime + delay);
+                o.stop(ctx.currentTime + delay + dur + 0.02);
+            }
+            return {
+                click() { tone(600, 0.05, 'square', 0.03); },
+                open() { tone(440, 0.1, 'sine', 0.05); tone(660, 0.1, 'sine', 0.05, 0.1); },
+                correct() { tone(660, 0.12, 'sine', 0.08); tone(880, 0.16, 'sine', 0.08, 0.1); },
+                wrong() { tone(200, 0.18, 'sawtooth', 0.08); tone(150, 0.22, 'sawtooth', 0.08, 0.1); },
+                win() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.18, 'triangle', 0.09, i * 0.12)); },
+                lose() { [392, 330, 262, 196].forEach((f, i) => tone(f, 0.2, 'sawtooth', 0.07, i * 0.12)); }
+            };
+        })();
+
         window.addEventListener('contextmenu', e => e.preventDefault());
 
         const glow = document.getElementById('cursor-glow');
@@ -1079,6 +1138,7 @@
         }, { passive: true });
 
         function openGame(game) {
+            if (game !== 'menu') AudioFX.open();
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(game + '-view').classList.add('active');
             
@@ -1101,21 +1161,26 @@
             clearInterval(anagramTimerInterval);
             clearInterval(tttTimerInterval);
             clearInterval(hangmanTimerInterval);
+            clearInterval(quizTimerInterval);
+            clearInterval(capTimerInterval);
+            clearInterval(seqTimerInterval);
 
             if (game === 'memory') initMemoryGame();
             if (game === 'wordsearch') initWordSearch();
             if (game === 'math') initMathGame();
             if (game === 'tictactoe') initTicTacToe();
-            if (game === 'rps') initRPS();
             if (game === 'guess') initGuess();
             if (game === 'genius') initGenius();
             if (game === 'mole') initMole();
             if (game === 'hangman') initHangman();
             if (game === 'reaction') initReaction();
             if (game === 'color') initColorMatch();
-        if (game === 'anagram') initAnagram();
-        if (game === 'chess') reiniciarJogoXadrez();
-    }
+            if (game === 'anagram') initAnagram();
+            if (game === 'quiz') initQuiz();
+            if (game === 'capital') initCapital();
+            if (game === 'sequence') initSequence();
+            if (game === 'chess') reiniciarJogoXadrez();
+        }
 
         const THEMES = {
             frutas: ["MACA", "BANANA", "UVA", "MORANGO", "LARANJA", "ABACAXI", "MANGA", "PERA"],
@@ -1675,43 +1740,154 @@
             return false;
         }
 
-        let rpsPlayerScore = 0;
-        let rpsPcScore = 0;
+        const quizPerguntas = [
+            { q: 'Qual é a capital do Brasil?', o: ['Rio de Janeiro', 'Brasília', 'São Paulo', 'Salvador'], a: 1 },
+            { q: 'Quanto é 7 x 8?', o: ['54', '56', '64', '48'], a: 1 },
+            { q: 'Qual planeta é conhecido como Planeta Vermelho?', o: ['Vênus', 'Marte', 'Júpiter', 'Saturno'], a: 1 },
+            { q: 'Quem escreveu Dom Casmurro?', o: ['Machado de Assis', 'José de Alencar', 'Clarice Lispector', 'Monteiro Lobato'], a: 0 },
+            { q: 'Qual é o maior oceano do mundo?', o: ['Atlântico', 'Índico', 'Pacífico', 'Ártico'], a: 2 }
+        ];
+        let quizIdx = 0, quizScore = 0, quizLock = false, quizTimerInterval, quizStartTime;
 
-        function initRPS() {
-            rpsPlayerScore = 0;
-            rpsPcScore = 0;
-            document.getElementById('rps-score').textContent = `Você: ${rpsPlayerScore} | PC: ${rpsPcScore}`;
-            document.getElementById('rps-result').innerHTML = "Escolha uma opção abaixo!";
+        function initQuiz() {
+            quizIdx = 0; quizScore = 0; quizLock = false;
+            document.getElementById('quiz-score').textContent = 'Pontos: 0';
+            document.getElementById('quiz-status').textContent = '';
+            clearInterval(quizTimerInterval);
+            quizStartTime = Date.now();
+            document.getElementById('quiz-timer').textContent = 'Tempo: 0s';
+            quizTimerInterval = setInterval(() => {
+                document.getElementById('quiz-timer').textContent = `Tempo: ${Math.floor((Date.now() - quizStartTime) / 1000)}s`;
+            }, 1000);
+            renderQuiz();
         }
 
-        function playRPS(playerChoice) {
-            const choices = ['pedra', 'papel', 'tesoura'];
-            const pcChoice = choices[Math.floor(Math.random() * 3)];
-            
-            let resultText = "";
-            let emojiMap = { pedra: '✊', papel: '✋', tesoura: '✌️' };
-            
-            if (playerChoice === pcChoice) {
-                resultText = "Empate! 🤝";
-            } else if (
-                (playerChoice === 'pedra' && pcChoice === 'tesoura') ||
-                (playerChoice === 'papel' && pcChoice === 'pedra') ||
-                (playerChoice === 'tesoura' && pcChoice === 'papel')
-            ) {
-                resultText = "Você ganhou! 🎉";
-                rpsPlayerScore++;
-            } else {
-                resultText = "Você perdeu! 😢";
-                rpsPcScore++;
+        function renderQuiz() {
+            quizLock = false;
+            const qEl = document.getElementById('quiz-question');
+            const optsEl = document.getElementById('quiz-options');
+            if (quizIdx >= quizPerguntas.length) {
+                clearInterval(quizTimerInterval);
+                document.getElementById('quiz-status').textContent = `Fim! Acertos: ${quizScore}/${quizPerguntas.length}`;
+                optsEl.innerHTML = '';
+                if (quizScore >= 30) AudioFX.win(); else AudioFX.lose();
+                return;
             }
+            const p = quizPerguntas[quizIdx];
+            qEl.textContent = `${quizIdx + 1}. ${p.q}`;
+            optsEl.innerHTML = '';
+            p.o.forEach((txt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'math-btn';
+                btn.textContent = txt;
+                btn.onpointerdown = (e) => {
+                    if (e.button === 0 || e.button === 2) {
+                        if (quizLock) return;
+                        quizLock = true;
+                        if (i === p.a) { quizScore += 10; AudioFX.correct(); } else { AudioFX.wrong(); }
+                        document.getElementById('quiz-score').textContent = `Pontos: ${quizScore}`;
+                        quizIdx++;
+                        setTimeout(renderQuiz, 550);
+                    }
+                };
+                optsEl.appendChild(btn);
+            });
+        }
 
-            document.getElementById('rps-score').textContent = `Você: ${rpsPlayerScore} | PC: ${rpsPcScore}`;
-            document.getElementById('rps-result').innerHTML = `
-                Você escolheu: ${emojiMap[playerChoice]}<br>
-                PC escolheu: ${emojiMap[pcChoice]}<br>
-                <strong>${resultText}</strong>
-            `;
+        const capitalPares = [
+            { p: 'Brasil', c: 'Brasília' }, { p: 'Argentina', c: 'Buenos Aires' },
+            { p: 'França', c: 'Paris' }, { p: 'Japão', c: 'Tóquio' },
+            { p: 'Itália', c: 'Roma' }, { p: 'Canadá', c: 'Ottawa' }
+        ];
+        let capAtual = null, capScore = 0, capLock = false, capTimerInterval, capStartTime;
+
+        function initCapital() {
+            capScore = 0; capLock = false;
+            document.getElementById('capital-score').textContent = 'Pontos: 0';
+            document.getElementById('capital-status').textContent = '';
+            clearInterval(capTimerInterval);
+            capStartTime = Date.now();
+            document.getElementById('capital-timer').textContent = 'Tempo: 0s';
+            capTimerInterval = setInterval(() => {
+                document.getElementById('capital-timer').textContent = `Tempo: ${Math.floor((Date.now() - capStartTime) / 1000)}s`;
+            }, 1000);
+            nextCapital();
+        }
+
+        function nextCapital() {
+            capLock = false;
+            capAtual = capitalPares[Math.floor(Math.random() * capitalPares.length)];
+            document.getElementById('capital-target').textContent = capAtual.p;
+            const opts = [capAtual.c];
+            while (opts.length < 4) {
+                const c = capitalPares[Math.floor(Math.random() * capitalPares.length)].c;
+                if (!opts.includes(c)) opts.push(c);
+            }
+            opts.sort(() => 0.5 - Math.random());
+            const optsEl = document.getElementById('capital-options');
+            optsEl.innerHTML = '';
+            opts.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = 'math-btn';
+                btn.textContent = c;
+                btn.onpointerdown = (e) => {
+                    if (e.button === 0 || e.button === 2) {
+                        if (capLock) return;
+                        capLock = true;
+                        if (c === capAtual.c) { capScore += 10; AudioFX.correct(); } else { AudioFX.wrong(); }
+                        document.getElementById('capital-score').textContent = `Pontos: ${capScore}`;
+                        setTimeout(nextCapital, 700);
+                    }
+                };
+                optsEl.appendChild(btn);
+            });
+        }
+
+        let seqScore = 0, seqLock = false, seqTimerInterval, seqStartTime, seqResposta = 0;
+
+        function initSequence() {
+            seqScore = 0; seqLock = false;
+            document.getElementById('sequence-score').textContent = 'Pontos: 0';
+            document.getElementById('sequence-status').textContent = '';
+            clearInterval(seqTimerInterval);
+            seqStartTime = Date.now();
+            document.getElementById('sequence-timer').textContent = 'Tempo: 0s';
+            seqTimerInterval = setInterval(() => {
+                document.getElementById('sequence-timer').textContent = `Tempo: ${Math.floor((Date.now() - seqStartTime) / 1000)}s`;
+            }, 1000);
+            nextSequence();
+        }
+
+        function nextSequence() {
+            seqLock = false;
+            const base = Math.floor(Math.random() * 15) + 1;
+            const passo = Math.floor(Math.random() * 6) + 2;
+            const valores = [base, base + passo, base + passo * 2, base + passo * 3];
+            seqResposta = valores[3];
+            document.getElementById('sequence-target').textContent = `${valores[0]}, ${valores[1]}, ${valores[2]}, ?`;
+            const opts = [seqResposta];
+            while (opts.length < 4) {
+                const fake = seqResposta + Math.floor(Math.random() * 20) - 10;
+                if (fake >= 0 && !opts.includes(fake)) opts.push(fake);
+            }
+            opts.sort(() => 0.5 - Math.random());
+            const optsEl = document.getElementById('sequence-options');
+            optsEl.innerHTML = '';
+            opts.forEach(v => {
+                const btn = document.createElement('button');
+                btn.className = 'math-btn';
+                btn.textContent = v;
+                btn.onpointerdown = (e) => {
+                    if (e.button === 0 || e.button === 2) {
+                        if (seqLock) return;
+                        seqLock = true;
+                        if (v === seqResposta) { seqScore += 10; AudioFX.correct(); } else { AudioFX.wrong(); }
+                        document.getElementById('sequence-score').textContent = `Pontos: ${seqScore}`;
+                        setTimeout(nextSequence, 650);
+                    }
+                };
+                optsEl.appendChild(btn);
+            });
         }
 
         let guessSecret = 0;
